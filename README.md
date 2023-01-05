@@ -1,4 +1,4 @@
 # Tik Tak Toe Game
 
 ### Dependencies
-* Tkinter
+* PyGame
