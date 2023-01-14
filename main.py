@@ -1,4 +1,8 @@
-import ttt
+import domain
+
+from game import Game
+
 
 if __name__ == '__main__':
-    print('Hello, with a Tik, a Tak, and some Toes!')
+    game = Game()
+    game.run()
