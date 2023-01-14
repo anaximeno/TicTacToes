@@ -1,8 +1,5 @@
-import domain
-
-from game import Game
-
+import ttt
 
 if __name__ == '__main__':
-    game = Game()
+    game = ttt.Game()
     game.run()

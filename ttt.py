@@ -1,8 +1,9 @@
-from .constants import *
 from random import randint
+import sys
+
+from constants import *
 from pygame.math import Vector2
 import pygame as pg
-import sys
 
 
 def get_scaled_image(path, res) -> pg.Surface:
