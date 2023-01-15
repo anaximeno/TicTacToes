@@ -1,3 +1,6 @@
+from constants import INF
+
+
 class KnowledgeSource:
     def __init__(self, name: str, path: str, description: str) -> None:
         self._desc = description
@@ -43,9 +46,34 @@ class Controller:
 class Blackboard:
     def __init__(self, controller: Controller) -> None:
         self._control = controller
+        self._data = [[INF, INF, INF],
+                      [INF, INF, INF],
+                      [INF, INF, INF]]
+        self._lines = [
+            [(0, 0), (0, 1), (0, 2)],
+            [(1, 0), (1, 1), (1, 2)],
+            [(2, 0), (2, 1), (2, 2)],
+            [(0, 0), (1, 0), (2, 0)],
+            [(0, 1), (1, 1), (2, 1)],
+            [(0, 2), (1, 2), (2, 2)],
+            [(0, 0), (1, 1), (2, 2)],
+            [(0, 2), (1, 1), (2, 0)],
+        ]
 
-    def update(self) -> None:
-        pass
+    def update(self, *, row: int, col: int, value: int) -> None:
+        if row < len(self._data) and col < len(self._data[row]):
+            self._data[row][col] = value
+            # TODO: notify controller
 
-    def access(self) -> None:
-        pass
+    def access(self, *, row: int = None, col: int = None) -> int | None:
+        if row < len(self._data) and col < len(self._data[row]):
+            return self._data[row][col]
+        return None
+
+    @property
+    def data(self) -> list[list[float]]:
+        return self._data
+
+    @property
+    def lines(self) -> list[list[tuple[int]]]:
+        return self._lines
