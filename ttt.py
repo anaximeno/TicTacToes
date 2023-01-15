@@ -61,7 +61,7 @@ class TicTacToe:
         )
         self.o_img = get_scaled_image(path=O_IMG_PATH, res=[CELL_SIZE] * 2)
         self.x_img = get_scaled_image(path=X_IMG_PATH, res=[CELL_SIZE] * 2)
-        self.player = randint(0, 1)
+        self.player = 0
         self.winner = None
         self.game_steps = 0
         self.winner_line = []
