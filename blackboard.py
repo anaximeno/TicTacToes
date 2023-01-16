@@ -105,8 +105,8 @@ class KnowledgeSource:
 
 
 class Controller:
-    def __init__(self, board, knowledge_sorce: KnowledgeSource) -> None:
-        self.ks = knowledge_sorce
+    def __init__(self, board, knowledge_source: KnowledgeSource) -> None:
+        self.ks = knowledge_source
         self.board = board
 
     def executeKS(self) -> bool:
