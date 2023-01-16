@@ -1,5 +1,5 @@
-import ttt
+from ttt import Game
 
 if __name__ == '__main__':
-    game = ttt.Game()
+    game = Game()
     game.run()

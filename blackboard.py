@@ -1,28 +1,28 @@
-from pyswip import Prolog, cleanupProlog
-from constants import INF
+from pyswip import Prolog
+
+from constants import *
+
+import os
+
+DEBUG: bool = os.getenv('DEBUG') or False
 
 prolog = Prolog()
 
-prolog.consult('knowledge/retinentia.pl')
-prolog.consult('knowledge/computatio.pl')
+prolog.consult(RETINENTIA_KNOWLEDGE_SOURCE)
+prolog.consult(COMPUTATION_KNOWLEDGE_SOURCE)
 
 
-def simple_query(q: str) -> dict[str, any] | None:
+def execute_simple_query(q: str) -> dict[str, any] | None:
     try:
         query = prolog.query(query=q)
         result = next(query)
         query.close()
         return result
     except:
-        print(f'Error during prolog query {q!r}')
+        if DEBUG:
+            print(f'Got a prolog query exception while executing {q!r}!')
         return None
 
-
-class Positions:
-    V = 0
-    H = 1
-    DL = 2
-    DR = 3
 
 
 class Action:
@@ -39,23 +39,23 @@ class KnowledgeSource:
 
     def _line_query(self, name: str, line: int = None) -> dict[str, int] | None:
         infix = f'{line}, ' if line is not None else ''
-        return simple_query(f"{name}({infix}R, H)")
+        return execute_simple_query(f"{name}({infix}R, H)")
 
     def _compute_query(self, name: str, line: int = None) -> dict[str, int] | None:
         infix = f'{line}, ' if line is not None else ''
-        return simple_query(f"{name}({infix}L, C, Value)")
+        return execute_simple_query(f"{name}({infix}L, C, Value)")
 
     def _compute(self, lines: list[tuple[int, int, int, int]]) -> Action | None:
         for line in lines:
             computation = None
 
-            if line[0] == Positions.V:
+            if line[0] == EnumPositions.V:
                 computation = self._compute_query('compute_vert', line[1])
-            if line[0] == Positions.H:
+            if line[0] == EnumPositions.H:
                 computation = self._compute_query('compute_horiz', line[1])
-            if line[0] == Positions.DL:
+            if line[0] == EnumPositions.DL:
                 computation = self._compute_query('compute_diag_l')
-            if line[0] == Positions.DR:
+            if line[0] == EnumPositions.DR:
                 computation = self._compute_query('compute_diag_r')
 
             if computation is not None:
@@ -72,14 +72,14 @@ class KnowledgeSource:
 
         for i in range(3):
             if (vline := self._line_query('praeventionis_rvline', line=i)) is not None:
-                lines.append((Positions.V, i, vline['R'], vline['H']))
+                lines.append((EnumPositions.V, i, vline['R'], vline['H']))
             if (hline := self._line_query('praeventionis_rhline', line=i)) is not None:
-                lines.append((Positions.H, i, hline['R'], hline['H']))
+                lines.append((EnumPositions.H, i, hline['R'], hline['H']))
 
         if (dline_l := self._line_query('praeventionis_rdline_l')) is not None:
-            lines.append((Positions.DL, 0, dline_l['R'], dline_l['H']))
+            lines.append((EnumPositions.DL, 0, dline_l['R'], dline_l['H']))
         if (dline_r := self._line_query('praeventionis_rdline_r')) is not None:
-            lines.append((Positions.DR, 0, dline_r['R'], dline_r['H']))
+            lines.append((EnumPositions.DR, 0, dline_r['R'], dline_r['H']))
 
         lines.sort(key=lambda x: x[3], reverse=True)
 
@@ -90,14 +90,14 @@ class KnowledgeSource:
 
         for i in range(3):
             if (vline := self._line_query('quaestum_rvline', line=i)) is not None:
-                lines.append((Positions.V, i, vline['R'], vline['H']))
+                lines.append((EnumPositions.V, i, vline['R'], vline['H']))
             if (hline := self._line_query('quaestum_rhline', line=i)) is not None:
-                lines.append((Positions.H, i, hline['R'], hline['H']))
+                lines.append((EnumPositions.H, i, hline['R'], hline['H']))
 
         if (dline_l := self._line_query('quaestum_rdline_l')) is not None:
-            lines.append((Positions.DL, 0, dline_l['R'], dline_l['H']))
+            lines.append((EnumPositions.DL, 0, dline_l['R'], dline_l['H']))
         if (dline_r := self._line_query('quaestum_rdline_r')) is not None:
-            lines.append((Positions.DR, 0, dline_r['R'], dline_r['H']))
+            lines.append((EnumPositions.DR, 0, dline_r['R'], dline_r['H']))
 
         lines.sort(key=lambda x: x[3], reverse=True)
 
@@ -109,9 +109,11 @@ class Controller:
         self.ks = knowledge_sorce
         self.board = board
 
-    def executeKS(self) -> None:
+    def executeKS(self) -> bool:
         preventive = self.ks.suggest_preventive_action()
         competitive = self.ks.suggest_competitive_action()
+
+        action = None
 
         if preventive and competitive:
             action = preventive if preventive.height > competitive.height else competitive
@@ -119,16 +121,26 @@ class Controller:
             action = preventive
         elif competitive:
             action = competitive
-        else:
-            action = None
+
+        if DEBUG:
+            if preventive:
+                print('* Preventive Suggestion: row = {}, column = {}, height = {}'.format(preventive.line, preventive.col, preventive.height))
+            if competitive:
+                print('* Competitive Suggestion: row = {}, column = {}, height = {}'.format(competitive.line, competitive.col, competitive.height))
+            if action is not None:
+                print('=> Acting "%s"' % ["Competitively", "Preventively"][int(action == preventive)])
 
         if action is not None:
             self.board.update(row=action.line, col=action.col, value=1)
+            return True
+
+        return False
 
 
 class Blackboard:
     def __init__(self, game) -> None:
         self._control = Controller(self, KnowledgeSource())
+
         self._game = game
 
         self._data = [[INF, INF, INF],
@@ -157,8 +169,8 @@ class Blackboard:
             prolog.assertz(f"{'ox'[value]}({row}, {col})")
             self._data[row][col] = value
             self._game.check_winner()
-            if value == 0 and self._game.winner is None:
-                self._control.executeKS()
+            if value == 0 and self._game.winner is None and self._control.executeKS():
+                self._game.increment_game_steps()
 
     def access(self, *, row: int = None, col: int = None) -> int | None:
         if row < len(self._data) and col < len(self._data[row]):
