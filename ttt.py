@@ -42,26 +42,13 @@ class Game:
 class TicTacToe:
     def __init__(self, game: Game) -> None:
         self.game = game
-        self._board = Blackboard(
-            Controller([
-                KnowledgeSource(
-                    name='Praeventionis',
-                    description='Módulo especializado na prevenção da derrota',
-                    path='knowledge/praeventionis.pl',
-                ),
-                KnowledgeSource(
-                    name='Quaestum',
-                    description='Módulo especializado em ganhar o jogo',
-                    path='knowledge/quaestum.pl',
-                ),
-            ])
-        )
+        self._board = Blackboard(self)
         self.back_img = get_scaled_image(
             path=BOARD_IMG_PATH, res=[WIN_SIZE] * 2,
         )
         self.o_img = get_scaled_image(path=O_IMG_PATH, res=[CELL_SIZE] * 2)
         self.x_img = get_scaled_image(path=X_IMG_PATH, res=[CELL_SIZE] * 2)
-        self.player = 0
+        self.ply = 0
         self.winner = None
         self.game_steps = 0
         self.winner_line = []
@@ -87,18 +74,19 @@ class TicTacToe:
         left_click = pg.mouse.get_pressed()[0]
 
         if left_click and self._board.access(row=row, col=col) == INF and self.winner is None:
-            self._board.update(row=row, col=col, value=self.player)
-            self.player = not self.player
+            self._board.update(row=row, col=col, value=self.ply)
+            # self.ply = not self.ply
             self.game_steps += 1
             self.check_winner()
 
     def print_caption(self) -> None:
         if self.winner:
-            pg.display.set_caption(f'Player {self.winner!r} Wins! Press "Space" to Restart.')
+            pg.display.set_caption(
+                f'Player {self.winner!r} Wins! Press "Space" to Restart.')
         elif self.game_steps == 9:
             pg.display.set_caption(f'Game Over! Press "Space" to Restart')
         else:
-            pg.display.set_caption(f'Player {"OX"[self.player]!r} Turn!')
+            pg.display.set_caption(f'Player {"OX"[self.ply]!r} Turn!')
 
     def draw(self) -> None:
         self.game.screen.blit(self.back_img, (0, 0))
