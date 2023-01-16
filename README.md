@@ -11,3 +11,4 @@ This is a **tik tak toe** game made using **Python** with **PyGame** for the gam
 - Russell, Stuart, et, Norvig, Peter, "***Artificial Intelligence A Modern Approach***", 4th Edition
 - Lalanda, Philippe, “***Two complementary patterns to build multi-expert systems***”, Thomson-CSF Corporate Research Laboratory
 - [Coding Tic Tac Toe in Python with Pygame](https://www.youtube.com/watch?v=q_Nzuyvf3tw) by Coder Space on YouTube
+- Pilgrim, A. Robert, "***TIC-TAC-TOE: Introducing Export Systems to Middle School Students***", Dept. of Computer Science and Information Systems, Murray State University
