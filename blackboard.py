@@ -24,7 +24,6 @@ def execute_simple_query(q: str) -> dict[str, any] | None:
         return None
 
 
-
 class Action:
     def __init__(self, col: int, line: int, value: int, weight: int) -> None:
         self.weight = weight
@@ -50,13 +49,17 @@ class KnowledgeSource:
             computation = None
 
             if line[0] == EnumPositions.V:
-                computation = self._compute_query('compute_vert', line[1])
+                computation = self._compute_query(
+                    'best_vertical_point_to_play', line[1])
             if line[0] == EnumPositions.H:
-                computation = self._compute_query('compute_horiz', line[1])
+                computation = self._compute_query(
+                    'best_horizontal_point_to_play', line[1])
             if line[0] == EnumPositions.DL:
-                computation = self._compute_query('compute_diag_l')
+                computation = self._compute_query(
+                    'best_left_right_diagonal_point_to_play')
             if line[0] == EnumPositions.DR:
-                computation = self._compute_query('compute_diag_r')
+                computation = self._compute_query(
+                    'best_right_left_diagonal_point_to_play')
 
             if computation is not None:
                 return Action(
@@ -71,14 +74,14 @@ class KnowledgeSource:
         lines = []
 
         for i in range(3):
-            if (vline := self._line_query('praeventionis_rvline', line=i)) is not None:
+            if (vline := self._line_query('o_value_achieved_at_a_vertical_line', line=i)) is not None:
                 lines.append((EnumPositions.V, i, vline['R'], vline['H']))
-            if (hline := self._line_query('praeventionis_rhline', line=i)) is not None:
+            if (hline := self._line_query('o_value_achieved_at_an_horizontal_line', line=i)) is not None:
                 lines.append((EnumPositions.H, i, hline['R'], hline['H']))
 
-        if (dline_l := self._line_query('praeventionis_rdline_l')) is not None:
+        if (dline_l := self._line_query('o_value_achieved_at_the_left_right_diagonal')) is not None:
             lines.append((EnumPositions.DL, 0, dline_l['R'], dline_l['H']))
-        if (dline_r := self._line_query('praeventionis_rdline_r')) is not None:
+        if (dline_r := self._line_query('o_value_achieved_at_the_right_left_diagonal')) is not None:
             lines.append((EnumPositions.DR, 0, dline_r['R'], dline_r['H']))
 
         lines.sort(key=lambda x: x[3], reverse=True)
@@ -89,14 +92,14 @@ class KnowledgeSource:
         lines = []
 
         for i in range(3):
-            if (vline := self._line_query('quaestum_rvline', line=i)) is not None:
+            if (vline := self._line_query('x_value_achieved_at_a_vertical_line', line=i)) is not None:
                 lines.append((EnumPositions.V, i, vline['R'], vline['H']))
-            if (hline := self._line_query('quaestum_rhline', line=i)) is not None:
+            if (hline := self._line_query('x_value_achieved_at_an_horizontal_line', line=i)) is not None:
                 lines.append((EnumPositions.H, i, hline['R'], hline['H']))
 
-        if (dline_l := self._line_query('quaestum_rdline_l')) is not None:
+        if (dline_l := self._line_query('x_value_achieved_at_the_left_right_diagonal')) is not None:
             lines.append((EnumPositions.DL, 0, dline_l['R'], dline_l['H']))
-        if (dline_r := self._line_query('quaestum_rdline_r')) is not None:
+        if (dline_r := self._line_query('x_value_achieved_at_the_right_left_diagonal')) is not None:
             lines.append((EnumPositions.DR, 0, dline_r['R'], dline_r['H']))
 
         lines.sort(key=lambda x: x[3], reverse=True)
@@ -124,11 +127,14 @@ class Controller:
 
         if DEBUG == 1 or DEBUG == 2:
             if preventive:
-                print('* Preventive Suggestion: row = {}, column = {}, weight = {}'.format(preventive.line, preventive.col, preventive.weight))
+                print('* Preventive Suggestion: row = {}, column = {}, weight = {}'.format(
+                    preventive.line, preventive.col, preventive.weight))
             if competitive:
-                print('* Competitive Suggestion: row = {}, column = {}, weight = {}'.format(competitive.line, competitive.col, competitive.weight))
+                print('* Competitive Suggestion: row = {}, column = {}, weight = {}'.format(
+                    competitive.line, competitive.col, competitive.weight))
             if action is not None:
-                print('=> Acting "%s"' % ["Competitively", "Preventively"][int(action == preventive)])
+                print('=> Acting "%s"' %
+                      ["Competitively", "Preventively"][int(action == preventive)])
 
         if action is not None:
             self.board.update(row=action.line, col=action.col, value=1)
