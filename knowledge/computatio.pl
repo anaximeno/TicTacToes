@@ -1,5 +1,3 @@
-% I will probably not remember what I made here though... :-)
-
 :- consult('knowledge/valorem.pl').
 
 step_func(1, X) :- X > 0, !.
