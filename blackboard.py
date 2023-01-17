@@ -26,8 +26,8 @@ def execute_simple_query(q: str) -> dict[str, any] | None:
 
 
 class Action:
-    def __init__(self, col: int, line: int, value: int, height: int) -> None:
-        self.height = height
+    def __init__(self, col: int, line: int, value: int, weight: int) -> None:
+        self.weight = weight
         self.value = value
         self.line = line
         self.col = col
@@ -63,7 +63,7 @@ class KnowledgeSource:
                     line=computation['L'],
                     col=computation['C'],
                     value=line[2] + computation['Value'],
-                    height=line[3] + computation['Value'],
+                    weight=line[3] + computation['Value'],
                 )
         return None
 
@@ -116,7 +116,7 @@ class Controller:
         action = None
 
         if preventive and competitive:
-            action = preventive if preventive.height > competitive.height else competitive
+            action = preventive if preventive.weight > competitive.weight else competitive
         elif preventive:
             action = preventive
         elif competitive:
@@ -124,9 +124,9 @@ class Controller:
 
         if DEBUG == 1 or DEBUG == 2:
             if preventive:
-                print('* Preventive Suggestion: row = {}, column = {}, height = {}'.format(preventive.line, preventive.col, preventive.height))
+                print('* Preventive Suggestion: row = {}, column = {}, weight = {}'.format(preventive.line, preventive.col, preventive.weight))
             if competitive:
-                print('* Competitive Suggestion: row = {}, column = {}, height = {}'.format(competitive.line, competitive.col, competitive.height))
+                print('* Competitive Suggestion: row = {}, column = {}, weight = {}'.format(competitive.line, competitive.col, competitive.weight))
             if action is not None:
                 print('=> Acting "%s"' % ["Competitively", "Preventively"][int(action == preventive)])
 

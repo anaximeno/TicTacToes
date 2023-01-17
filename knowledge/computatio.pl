@@ -5,7 +5,7 @@
 h(1, X) :- X > 0, !.
 h(0, 0).
 
-height(H, X, Y, Z) :- h(A, X), h(B, Y), h(C, Z), H is A + B + C.
+weight(H, X, Y, Z) :- h(A, X), h(B, Y), h(C, Z), H is A + B + C.
 
 praeventionis_cc_value(Line, Col, Value) :- o(Line, Col), value(Line, Col, Value), !.
 praeventionis_cc_value(_, _, 0).
@@ -17,7 +17,7 @@ praeventionis_rvline(N, R, H) :-
     praeventionis_cc_value(0, N, X),
     praeventionis_cc_value(1, N, Y),
     praeventionis_cc_value(2, N, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is R * S.
 
@@ -25,7 +25,7 @@ quaestum_rvline(N, R, H) :-
     quaestum_cc_value(0, N, X),
     quaestum_cc_value(1, N, Y),
     quaestum_cc_value(2, N, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is (R + 1) * S.
 
@@ -33,7 +33,7 @@ praeventionis_rhline(N, R, H) :-
     praeventionis_cc_value(N, 0, X),
     praeventionis_cc_value(N, 1, Y),
     praeventionis_cc_value(N, 2, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is R * S.
 
@@ -41,7 +41,7 @@ quaestum_rhline(N, R, H) :-
     quaestum_cc_value(N, 0, X),
     quaestum_cc_value(N, 1, Y),
     quaestum_cc_value(N, 2, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is (R + 1) * S.
 
@@ -49,7 +49,7 @@ praeventionis_rdline_l(R, H) :-
     praeventionis_cc_value(0, 0, X),
     praeventionis_cc_value(1, 1, Y),
     praeventionis_cc_value(2, 2, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is R * S.
 
@@ -57,7 +57,7 @@ quaestum_rdline_l(R, H) :-
     quaestum_cc_value(0, 0, X),
     quaestum_cc_value(1, 1, Y),
     quaestum_cc_value(2, 2, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is (R + 1) * S.
 
@@ -65,7 +65,7 @@ praeventionis_rdline_r(R, H) :-
     praeventionis_cc_value(0, 2, X),
     praeventionis_cc_value(1, 1, Y),
     praeventionis_cc_value(2, 0, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is R * S.
 
@@ -73,7 +73,7 @@ quaestum_rdline_r(R, H) :-
     quaestum_cc_value(0, 2, X),
     quaestum_cc_value(1, 1, Y),
     quaestum_cc_value(2, 0, Z),
-    height(S, X, Y, Z),
+    weight(S, X, Y, Z),
     R is X + Y + Z,
     H is (R + 1) * S.
 
