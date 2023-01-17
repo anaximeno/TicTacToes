@@ -4,7 +4,7 @@ from constants import *
 
 import os
 
-DEBUG: bool = os.getenv('DEBUG') or False
+DEBUG: bool = int(os.getenv('DEBUG')) if os.getenv('DEBUG') else None
 
 prolog = Prolog()
 
@@ -19,7 +19,7 @@ def execute_simple_query(q: str) -> dict[str, any] | None:
         query.close()
         return result
     except:
-        if DEBUG:
+        if DEBUG == 2:
             print(f'Got a prolog query exception while executing {q!r}!')
         return None
 
@@ -62,8 +62,8 @@ class KnowledgeSource:
                 return Action(
                     line=computation['L'],
                     col=computation['C'],
-                    value=line[2],
-                    height=line[3],
+                    value=line[2] + computation['Value'],
+                    height=line[3] + computation['Value'],
                 )
         return None
 
@@ -122,7 +122,7 @@ class Controller:
         elif competitive:
             action = competitive
 
-        if DEBUG:
+        if DEBUG == 1 or DEBUG == 2:
             if preventive:
                 print('* Preventive Suggestion: row = {}, column = {}, height = {}'.format(preventive.line, preventive.col, preventive.height))
             if competitive:
