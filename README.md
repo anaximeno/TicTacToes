@@ -1,6 +1,6 @@
-# Tik Tak Toe Game
+# Tic Tac Toe Game
 
-This is a **tik tak toe** game made using **Python** with **PyGame** for the game structure and Prolog to define the behavior of the actor that plays the game along with the user.
+This is a **tic tac toe** game made using **Python** with **PyGame** for the game structure and **Prolog** to define the behavior of the actor that plays the game along with the user.
 
 ## Dependencies
 - *PyGame >= 2.1.2*
@@ -10,5 +10,6 @@ This is a **tik tak toe** game made using **Python** with **PyGame** for the gam
 ## References
 - Russell, Stuart, et, Norvig, Peter, "***Artificial Intelligence A Modern Approach***", 4th Edition
 - Lalanda, Philippe, “***Two complementary patterns to build multi-expert systems***”, Thomson-CSF Corporate Research Laboratory
+- [6. Search: Games, Minimax, and Alpha-Beta](https://www.youtube.com/watch?v=STjW3eH0Cik) by MIT OpenCourseWare on YouTube
 - [Coding Tic Tac Toe in Python with Pygame](https://www.youtube.com/watch?v=q_Nzuyvf3tw) by Coder Space on YouTube
 - Pilgrim, A. Robert, "***TIC-TAC-TOE: Introducing Export Systems to Middle School Students***", Dept. of Computer Science and Information Systems, Murray State University
