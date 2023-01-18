@@ -24,15 +24,17 @@ After installing the dependencies execute the program with:
 ```bash
 python3 main.py
 ```
+### Basic Debugging
 
 For basic debugging there exists two basic debug levels:
-1. describes each action suggested at each move of the player,
+
+1. Describes each action suggested at each move of the player
 
 ```bash
 DEBUG=1 python3 main.py
 ```
 
-2. describes eventual exceptions that occurred during the execution of the program (it also includes 1).
+2. Describes eventual exceptions that occurred during the execution of the program (it also includes 1)
 
 ```bash
 DEBUG=2 python3 main.py
