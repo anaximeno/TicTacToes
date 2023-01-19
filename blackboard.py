@@ -4,7 +4,7 @@ from constants import *
 
 import os
 
-DEBUG: bool = int(os.getenv('DEBUG')) if os.getenv('DEBUG') else None
+DEBUG: int = int(os.getenv('DEBUG')) if os.getenv('DEBUG') else None
 
 prolog = Prolog()
 
