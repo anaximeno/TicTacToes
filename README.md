@@ -12,8 +12,8 @@ This is a **tic tac toe** game made using **Python** with **PyGame** for the gam
 On Linux, the dependencies can be installed with the following commands:
 
 ```bash
-sudo apt install swi-prolog
-sudo apt install python3-pygame python3-pip
+sudo apt update
+sudo apt install swi-prolog python3-pygame python3-pip
 pip install pyswip
 ```
 
