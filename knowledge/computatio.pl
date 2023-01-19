@@ -5,6 +5,18 @@ step_func(0, 0).
 
 weight(H, X, Y, Z) :- step_func(A, X), step_func(B, Y), step_func(C, Z), H is A + B + C.
 
+competitivity_rate_horizontal(N, 5) :- not(o(N, _)), !.
+competitivity_rate_horizontal(_, 0).
+
+competitivity_rate_vertical(N, 5) :- not(o(_, N)), !.
+competitivity_rate_vertical(_, 0).
+
+competitivity_rate_left_right_diagonal(5) :- not(o(0, 0)), not(o(1, 1)), not(o(2, 2)), !.
+competitivity_rate_left_right_diagonal(0).
+
+competitivity_rate_right_left_diagonal(5) :- not(o(0, 2)), not(o(1, 1)), not(o(2, 0)), !.
+competitivity_rate_right_left_diagonal(0).
+
 o_value_achieved(Line, Col, Value) :- o(Line, Col), value_at_position(Line, Col, Value), !.
 o_value_achieved(_, _, 0).
 
@@ -25,7 +37,8 @@ x_value_achieved_at_a_vertical_line(N, R, H) :-
     x_value_achieved(2, N, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 5) * S.
+    competitivity_rate_vertical(N, G),
+    H is (R + G) * S.
 
 o_value_achieved_at_an_horizontal_line(N, R, H) :-
     o_value_achieved(N, 0, X),
@@ -41,7 +54,8 @@ x_value_achieved_at_an_horizontal_line(N, R, H) :-
     x_value_achieved(N, 2, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 5) * S.
+    competitivity_rate_horizontal(N, G),
+    H is (R + G) * S.
 
 o_value_achieved_at_the_left_right_diagonal(R, H) :-
     o_value_achieved(0, 0, X),
@@ -57,7 +71,8 @@ x_value_achieved_at_the_left_right_diagonal(R, H) :-
     x_value_achieved(2, 2, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 5) * S.
+    competitivity_rate_left_right_diagonal(G),
+    H is (R + G) * S.
 
 o_value_achieved_at_the_right_left_diagonal(R, H) :-
     o_value_achieved(0, 2, X),
@@ -73,7 +88,8 @@ x_value_achieved_at_the_right_left_diagonal(R, H) :-
     x_value_achieved(2, 0, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 5) * S.
+    competitivity_rate_right_left_diagonal(G),
+    H is (R + G) * S.
 
 best_vertical_point_to_play(N, L, C, Value) :-
     C is N,
