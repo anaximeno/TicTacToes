@@ -25,7 +25,7 @@ x_value_achieved_at_a_vertical_line(N, R, H) :-
     x_value_achieved(2, N, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 2) * S.
+    H is (R + 5) * S.
 
 o_value_achieved_at_an_horizontal_line(N, R, H) :-
     o_value_achieved(N, 0, X),
@@ -41,7 +41,7 @@ x_value_achieved_at_an_horizontal_line(N, R, H) :-
     x_value_achieved(N, 2, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 2) * S.
+    H is (R + 5) * S.
 
 o_value_achieved_at_the_left_right_diagonal(R, H) :-
     o_value_achieved(0, 0, X),
@@ -57,7 +57,7 @@ x_value_achieved_at_the_left_right_diagonal(R, H) :-
     x_value_achieved(2, 2, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 2) * S.
+    H is (R + 5) * S.
 
 o_value_achieved_at_the_right_left_diagonal(R, H) :-
     o_value_achieved(0, 2, X),
@@ -73,7 +73,7 @@ x_value_achieved_at_the_right_left_diagonal(R, H) :-
     x_value_achieved(2, 0, Z),
     weight(S, X, Y, Z),
     R is X + Y + Z,
-    H is (R + 2) * S.
+    H is (R + 5) * S.
 
 best_vertical_point_to_play(N, L, C, Value) :-
     C is N,
