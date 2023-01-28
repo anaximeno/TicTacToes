@@ -1,4 +1,5 @@
 from pyswip import Prolog
+from pyswip.prolog import PrologError
 
 from constants import *
 
@@ -13,15 +14,20 @@ prolog.consult(COMPUTATION_KNOWLEDGE_SOURCE)
 
 
 def execute_simple_query(q: str) -> dict[str, any] | None:
+    query = prolog.query(query=q)
+    result = None
+
     try:
-        query = prolog.query(query=q)
         result = next(query)
-        query.close()
-        return result
-    except:
+    except StopIteration:
+        if DEBUG == 2:
+            print(f'Got no results from query {q!r}')
+    except PrologError:
         if DEBUG == 2:
             print(f'Got a prolog query exception while executing {q!r}!')
-        return None
+
+    query.close()
+    return result
 
 
 class Action:
