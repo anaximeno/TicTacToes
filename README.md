@@ -45,4 +45,4 @@ DEBUG=2 python3 main.py
 - Lalanda, Philippe, “***Two complementary patterns to build multi-expert systems***”, Thomson-CSF Corporate Research Laboratory
 - [6. Search: Games, Minimax, and Alpha-Beta](https://www.youtube.com/watch?v=STjW3eH0Cik) by MIT OpenCourseWare on YouTube
 - [Coding Tic Tac Toe in Python with Pygame](https://www.youtube.com/watch?v=q_Nzuyvf3tw) by Coder Space on YouTube
-- Pilgrim, A. Robert, "***TIC-TAC-TOE: Introducing Export Systems to Middle School Students***", Dept. of Computer Science and Information Systems, Murray State University
+- Pilgrim, A. Robert, "***TIC-TAC-TOE: Introducing Expert Systems to Middle School Students***", Dept. of Computer Science and Information Systems, Murray State University
