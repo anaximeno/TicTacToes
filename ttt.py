@@ -8,8 +8,7 @@ from constants import *
 
 
 def get_scaled_image(path, res) -> pg.Surface:
-    img = pg.image.load(path)
-    return pg.transform.smoothscale(img, res)
+    return pg.transform.smoothscale(pg.image.load(path), res)
 
 
 class Game:

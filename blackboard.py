@@ -1,11 +1,10 @@
+from enum  import Enum
 from pyswip import Prolog
 from pyswip.prolog import PrologError
 
+from common import debug_log, DebugLevel
 from constants import *
 
-import os
-
-DEBUG: int = int(os.getenv('DEBUG')) if os.getenv('DEBUG') else None
 
 prolog = Prolog()
 
@@ -20,13 +19,12 @@ def execute_simple_query(q: str) -> dict[str, any] | None:
     try:
         result = next(query)
     except StopIteration:
-        if DEBUG == 2:
-            print(f'Got no results from query {q!r}')
+        debug_log(f'Got no results from query {q!r}', DebugLevel.WARNING)
     except PrologError:
-        if DEBUG == 2:
-            print(f'Got a prolog query exception while executing {q!r}!')
+        debug_log(f'Got a prolog query exception while executing {q!r}!', DebugLevel.WARNING)
+    finally:
+        query.close()
 
-    query.close()
     return result
 
 
@@ -36,6 +34,13 @@ class Action:
         self.value = value
         self.line = line
         self.col = col
+
+
+class Position(Enum):
+    VERTI = 0
+    HORIZ = 1
+    DIAG_LEFT = 2
+    DIAG_RIGHT = 3
 
 
 class KnowledgeSource:
@@ -54,16 +59,16 @@ class KnowledgeSource:
         for line in lines:
             computation = None
 
-            if line[0] == EnumPositions.V:
+            if line[0] == Position.VERTI:
                 computation = self._compute_query(
                     'best_vertical_point_to_play', line[1])
-            if line[0] == EnumPositions.H:
+            if line[0] == Position.HORIZ:
                 computation = self._compute_query(
                     'best_horizontal_point_to_play', line[1])
-            if line[0] == EnumPositions.DL:
+            if line[0] == Position.DIAG_LEFT:
                 computation = self._compute_query(
                     'best_left_right_diagonal_point_to_play')
-            if line[0] == EnumPositions.DR:
+            if line[0] == Position.DIAG_RIGHT:
                 computation = self._compute_query(
                     'best_right_left_diagonal_point_to_play')
 
@@ -81,14 +86,14 @@ class KnowledgeSource:
 
         for i in range(3):
             if (vline := self._line_query('o_value_achieved_at_a_vertical_line', line=i)) is not None:
-                lines.append((EnumPositions.V, i, vline['R'], vline['H']))
+                lines.append((Position.VERTI, i, vline['R'], vline['H']))
             if (hline := self._line_query('o_value_achieved_at_an_horizontal_line', line=i)) is not None:
-                lines.append((EnumPositions.H, i, hline['R'], hline['H']))
+                lines.append((Position.HORIZ, i, hline['R'], hline['H']))
 
         if (dline_l := self._line_query('o_value_achieved_at_the_left_right_diagonal')) is not None:
-            lines.append((EnumPositions.DL, 0, dline_l['R'], dline_l['H']))
+            lines.append((Position.DIAG_LEFT, 0, dline_l['R'], dline_l['H']))
         if (dline_r := self._line_query('o_value_achieved_at_the_right_left_diagonal')) is not None:
-            lines.append((EnumPositions.DR, 0, dline_r['R'], dline_r['H']))
+            lines.append((Position.DIAG_RIGHT, 0, dline_r['R'], dline_r['H']))
 
         lines.sort(key=lambda x: x[3], reverse=True)
 
@@ -99,14 +104,14 @@ class KnowledgeSource:
 
         for i in range(3):
             if (vline := self._line_query('x_value_achieved_at_a_vertical_line', line=i)) is not None:
-                lines.append((EnumPositions.V, i, vline['R'], vline['H']))
+                lines.append((Position.VERTI, i, vline['R'], vline['H']))
             if (hline := self._line_query('x_value_achieved_at_an_horizontal_line', line=i)) is not None:
-                lines.append((EnumPositions.H, i, hline['R'], hline['H']))
+                lines.append((Position.HORIZ, i, hline['R'], hline['H']))
 
         if (dline_l := self._line_query('x_value_achieved_at_the_left_right_diagonal')) is not None:
-            lines.append((EnumPositions.DL, 0, dline_l['R'], dline_l['H']))
+            lines.append((Position.DIAG_LEFT, 0, dline_l['R'], dline_l['H']))
         if (dline_r := self._line_query('x_value_achieved_at_the_right_left_diagonal')) is not None:
-            lines.append((EnumPositions.DR, 0, dline_r['R'], dline_r['H']))
+            lines.append((Position.DIAG_RIGHT, 0, dline_r['R'], dline_r['H']))
 
         lines.sort(key=lambda x: x[3], reverse=True)
 
@@ -122,31 +127,37 @@ class Controller:
         preventive = self.ks.suggest_preventive_action()
         competitive = self.ks.suggest_competitive_action()
 
-        action = None
+        if preventive is not None:
+            debug_log('* Preventive Suggestion: row = {}, column = {}, weight = {}'.format(
+                preventive.line, preventive.col, preventive.weight), DebugLevel.INFO)
 
-        if preventive and competitive:
-            action = preventive if preventive.weight > competitive.weight else competitive
-        elif preventive:
-            action = preventive
-        elif competitive:
-            action = competitive
+        if competitive is not None:
+            debug_log('* Competitive Suggestion: row = {}, column = {}, weight = {}'.format(
+                competitive.line, competitive.col, competitive.weight), DebugLevel.INFO)
 
-        if DEBUG == 1 or DEBUG == 2:
-            if preventive:
-                print('* Preventive Suggestion: row = {}, column = {}, weight = {}'.format(
-                    preventive.line, preventive.col, preventive.weight))
-            if competitive:
-                print('* Competitive Suggestion: row = {}, column = {}, weight = {}'.format(
-                    competitive.line, competitive.col, competitive.weight))
-            if action is not None:
-                print('=> Acting "%s"' %
-                      ["Competitively", "Preventively"][int(action == preventive)])
+        action = self._select_action(preventive, competitive)
 
         if action is not None:
+            debug_log('=> Acting "%s"' %
+                    ["Competitively", "Preventively"][int(action == preventive)], DebugLevel.INFO)
             self.board.update(row=action.line, col=action.col, value=1)
             return True
 
         return False
+
+    def _select_action(self, prev: Action | None, comp: Action | None) -> Action | None:
+        action = None
+
+        if prev and comp:
+            action = prev if prev.weight > comp.weight else comp
+        elif prev is not None:
+            action = prev
+        elif comp is not None:
+            action = comp
+        else:
+            debug_log('=> There are no more suggested actions!', DebugLevel.INFO)
+
+        return action
 
 
 class Blackboard:

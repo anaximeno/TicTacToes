@@ -13,6 +13,3 @@ COMPUTATION_KNOWLEDGE_SOURCE = "knowledge/computatio.pl"
 RETINENTIA_KNOWLEDGE_SOURCE = "knowledge/retinentia.pl"
 VALOREM_KNOWLEDGE_SOURCE = "knowledge/valorem.pl"
 
-
-class EnumPositions:
-    V, H, DL, DR = range(4)
