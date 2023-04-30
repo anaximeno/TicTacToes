@@ -47,6 +47,7 @@ class TicTacToe:
         )
         self.o_img = get_scaled_image(path=O_IMG_PATH, res=[CELL_SIZE] * 2)
         self.x_img = get_scaled_image(path=X_IMG_PATH, res=[CELL_SIZE] * 2)
+        self._players = ['robot', 'user']
         self.ply = 0
         self.winner = None
         self.game_steps = 0
@@ -56,7 +57,7 @@ class TicTacToe:
         for line in self._board.lines:
             total = sum([self._board.access(row=i, col=j) for i, j in line])
             if total in {0, 3}:
-                self.winner = 'XO'[total == 0]
+                self.winner = self._players[total == 0]
                 self.winner_line = [
                     vec2(line[0][::-1]) * CELL_SIZE + CELL_CENTER,
                     vec2(line[2][::-1]) * CELL_SIZE + CELL_CENTER,
@@ -64,7 +65,7 @@ class TicTacToe:
 
     def draw_winner(self) -> None:
         if self.winner is not None:
-            pg.draw.line(self.game.screen, 'red',
+            pg.draw.line(self.game.screen, 'yellow',
                          *self.winner_line, CELL_SIZE // 8)
 
     def increment_game_steps(self) -> None:
@@ -82,13 +83,17 @@ class TicTacToe:
 
     def print_caption(self) -> None:
         if self.winner:
-            set_caption(
-                f'Player {self.winner!r} Wins! Press "Space" to Restart.'
+            self.set_caption(
+                f'The {self.winner} player is the winner!'
+                ' Press "Space" to Restart.'
             )
         elif self.game_steps == 9:
-            set_caption(f'Game Over! Press "Space" to Restart')
+            self.set_caption(f'Game Over! Press "Space" to Restart')
         else:
-            set_caption(f'Player {"OX"[self.ply]!r} Turn!')
+            self.set_caption(f'Your Turn!')
+
+    def set_caption(self, caption: str) -> None:
+        set_caption(caption)
 
     def draw(self) -> None:
         self.game.screen.blit(self.back_img, (0, 0))

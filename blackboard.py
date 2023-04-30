@@ -192,8 +192,12 @@ class Blackboard:
             prolog.assertz(f"{'ox'[value]}({row}, {col})")
             self._data[row][col] = value
             self._game.check_winner()
-            if value == 0 and self._game.winner is None and self._control.executeKS():
-                self._game.increment_game_steps()
+            if value == 0 and self._game.winner is None:
+                self._process_robot_step()
+
+    def _process_robot_step(self) -> None:
+        if self._control.executeKS():
+            self._game.increment_game_steps()
 
     def access(self, *, row: int = None, col: int = None) -> int | None:
         if row < len(self._data) and col < len(self._data[row]):
