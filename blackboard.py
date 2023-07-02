@@ -59,18 +59,19 @@ class KnowledgeSource:
         for line in lines:
             computation = None
 
-            if line[0] == Position.VERTI:
-                computation = self._compute_query(
-                    'best_vertical_point_to_play', line[1])
-            if line[0] == Position.HORIZ:
-                computation = self._compute_query(
-                    'best_horizontal_point_to_play', line[1])
-            if line[0] == Position.DIAG_LEFT:
-                computation = self._compute_query(
-                    'best_left_right_diagonal_point_to_play')
-            if line[0] == Position.DIAG_RIGHT:
-                computation = self._compute_query(
-                    'best_right_left_diagonal_point_to_play')
+            match line[0]:
+                case Position.VERTI:
+                    computation = self._compute_query(
+                        'best_vertical_point_to_play', line[1])
+                case Position.HORIZ:
+                    computation = self._compute_query(
+                        'best_horizontal_point_to_play', line[1])
+                case Position.DIAG_LEFT:
+                    computation = self._compute_query(
+                        'best_left_right_diagonal_point_to_play')
+                case Position.DIAG_RIGHT:
+                    computation = self._compute_query(
+                        'best_right_left_diagonal_point_to_play')
 
             if computation is not None:
                 return Action(
