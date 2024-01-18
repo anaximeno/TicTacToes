@@ -14,7 +14,7 @@ On Linux, the dependencies can be installed with the following commands:
 ```bash
 sudo apt update
 sudo apt install swi-prolog python3-pygame python3-pip
-pip install pyswip
+pip install pyswip pygame
 ```
 
 ## Executing the Program
