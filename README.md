@@ -14,12 +14,20 @@ On Linux, the dependencies can be installed with the following commands:
 ```bash
 sudo apt update
 sudo apt install swi-prolog python3-pygame python3-pip
-pip install pyswip pygame
+```
+
+Some python libraries should also be installed before running the software, it is recommended that you install and configure [anaconda](https://docs.conda.io/projects/miniconda/en/latest/),
+and create a virtual environment to install the following dependencies inside:
+
+```
+conda install -c conda-forge libstdcxx-ng
+pip install git+https://github.com/yuce/pyswip@master#egg=pyswi
+pip install pygame
 ```
 
 ## Executing the Program
 
-After installing the dependencies execute the program with:
+After installing the dependencies (inside the conda env) execute the program with:
 
 ```bash
 python3 main.py
