@@ -25,6 +25,8 @@ pip install git+https://github.com/yuce/pyswip@master#egg=pyswi
 pip install pygame
 ```
 
+If `pip install git+https://github.com/yuce/pyswip@master#egg=pyswi` did not work you can try using `pip install pyswip` instead.
+
 ## Executing the Program
 
 After installing the dependencies (inside the conda env) execute the program with:
