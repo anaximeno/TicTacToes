@@ -23,7 +23,7 @@ and create a virtual environment to install the following dependencies inside:
 ```sh
 conda create -n ttt python=3.10
 conda install -n ttt -c conda-forge libstdcxx-ng
-conda run -n ttt pip install git+https://github.com/yuce/pyswip@master#egg=pyswi
+conda run -n ttt pip install git+https://github.com/yuce/pyswip@master#egg=pyswip
 conda run -n ttt  pip install pygame
 ```
 
