@@ -114,7 +114,7 @@ class TicTacToe:
 
         if left_click and self._board.access(row=row, col=col) == INF and self.winner is None:
             self._board.update(row=row, col=col, value=self.ply)
-            if self.animate_thinking is True:
+            if self.animate_thinking is True and self.game_steps < 8:
                 self.animate_agent_thinking(
                     animate_steps=THINKING_ANIMATION_STEPS,
                     sleep_secs=THINKING_ANIMATION_SLEEP_SECS,
