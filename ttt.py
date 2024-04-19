@@ -1,7 +1,10 @@
+import random
+
 import pygame as pg
 
 from pygame.math import Vector2 as vec2
 from pygame.display import set_caption
+from common import GameStartType
 
 from blackboard import *
 from constants import *
@@ -12,9 +15,10 @@ def get_scaled_image(path, res) -> pg.Surface:
 
 
 class Game:
-    def __init__(self) -> None:
+    def __init__(self, robot_start: GameStartType) -> None:
         pg.init()
-        self._tic_tac_toe = TicTacToe(self)
+        self.robot_start = robot_start
+        self._tic_tac_toe = TicTacToe(self, robot_start=robot_start)
         self.screen = pg.display.set_mode([WIN_SIZE] * 2)
         self.clock = pg.time.Clock()
 
@@ -28,7 +32,7 @@ class Game:
                     self.new_game()
 
     def new_game(self) -> None:
-        self._tic_tac_toe = TicTacToe(self)
+        self._tic_tac_toe = TicTacToe(self, robot_start=self.robot_start)
 
     def run(self) -> None:
         while True:
@@ -39,19 +43,40 @@ class Game:
 
 
 class TicTacToe:
-    def __init__(self, game: Game) -> None:
+    def __init__(self, game: Game, robot_start: GameStartType) -> None:
         self.game = game
+        self.robot_start = robot_start
         self._board = Blackboard(self)
-        self.back_img = get_scaled_image(
-            path=BOARD_IMG_PATH, res=[WIN_SIZE] * 2,
-        )
+        self.back_img = get_scaled_image(path=BOARD_IMG_PATH, res=[WIN_SIZE] * 2)
         self.o_img = get_scaled_image(path=O_IMG_PATH, res=[CELL_SIZE] * 2)
         self.x_img = get_scaled_image(path=X_IMG_PATH, res=[CELL_SIZE] * 2)
         self._players = ['robot', 'user']
-        self.ply = 0
         self.winner = None
-        self.game_steps = 0
         self.winner_line = []
+        self.game_steps = 0
+        self.ply = 0
+        self._game_start()
+
+    def _game_start(self):
+        start_by = self.robot_start
+
+        if start_by == GameStartType.RANDOM:
+            start_by = random.choice([
+                GameStartType.PLAYER,
+                GameStartType.AGENT,
+            ])
+
+        if start_by == GameStartType.AGENT:
+            debug_log("Starting By: Agent Player", level=DebugLevel.INFO)
+            row = random.randint(0, 2)
+            col = random.randint(0, 2)
+            self._board.update(
+                row=row,
+                col=col,
+                value=1,
+            )
+        else:
+            debug_log("Starting By: User Player", level=DebugLevel.INFO)
 
     def check_winner(self) -> None:
         for line in self._board.lines:
@@ -78,6 +103,7 @@ class TicTacToe:
 
         if left_click and self._board.access(row=row, col=col) == INF and self.winner is None:
             self._board.update(row=row, col=col, value=self.ply)
+            self._board.run_agent()
             self.increment_game_steps()
             self.check_winner()
 

@@ -193,8 +193,11 @@ class Blackboard:
             prolog.assertz(f"{'ox'[value]}({row}, {col})")
             self._data[row][col] = value
             self._game.check_winner()
-            if value == 0 and self._game.winner is None:
-                self._process_robot_step()
+
+    def run_agent(self) -> None:
+        if self._game.winner is None:
+            self._process_robot_step()
+            self._game.check_winner()
 
     def _process_robot_step(self) -> None:
         if self._control.executeKS():
