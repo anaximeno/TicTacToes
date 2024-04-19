@@ -24,7 +24,7 @@ and create a virtual environment to install the following dependencies inside:
 conda create -n ttt python=3.10
 conda install -n ttt -c conda-forge libstdcxx-ng
 conda run -n ttt pip install git+https://github.com/yuce/pyswip@master#egg=pyswip
-conda run -n ttt  pip install pygame
+conda run -n ttt pip install pygame
 ```
 
 If `conda run -n ttt pip install git+https://github.com/yuce/pyswip@master#egg=pyswi` did not work you can try using `conda run -n ttt pip install pyswip` instead.
@@ -34,7 +34,7 @@ If `conda run -n ttt pip install git+https://github.com/yuce/pyswip@master#egg=p
 After installing the dependencies (inside the conda env) execute the program with:
 
 ```sh
-conda run -n ttt main.py
+conda run -n ttt python3 main.py
 ```
 
 ### Basic Debugging
