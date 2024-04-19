@@ -1,4 +1,5 @@
 import random
+import time
 
 import pygame as pg
 
@@ -15,10 +16,15 @@ def get_scaled_image(path, res) -> pg.Surface:
 
 
 class Game:
-    def __init__(self, robot_start: GameStartType) -> None:
+    def __init__(self, robot_start: GameStartType, animate_thinking: bool) -> None:
         pg.init()
         self.robot_start = robot_start
-        self._tic_tac_toe = TicTacToe(self, robot_start=robot_start)
+        self.animate_thinking = animate_thinking
+        self._tic_tac_toe = TicTacToe(
+            self,
+            animate_thinking=animate_thinking,
+            robot_start=robot_start,
+        )
         self.screen = pg.display.set_mode([WIN_SIZE] * 2)
         self.clock = pg.time.Clock()
 
@@ -32,7 +38,11 @@ class Game:
                     self.new_game()
 
     def new_game(self) -> None:
-        self._tic_tac_toe = TicTacToe(self, robot_start=self.robot_start)
+        self._tic_tac_toe = TicTacToe(
+            self,
+            animate_thinking=self.animate_thinking,
+            robot_start=self.robot_start,
+        )
 
     def run(self) -> None:
         while True:
@@ -43,9 +53,10 @@ class Game:
 
 
 class TicTacToe:
-    def __init__(self, game: Game, robot_start: GameStartType) -> None:
+    def __init__(self, game: Game, robot_start: GameStartType, animate_thinking: bool = False) -> None:
         self.game = game
         self.robot_start = robot_start
+        self.animate_thinking = animate_thinking
         self._board = Blackboard(self)
         self.back_img = get_scaled_image(path=BOARD_IMG_PATH, res=[WIN_SIZE] * 2)
         self.o_img = get_scaled_image(path=O_IMG_PATH, res=[CELL_SIZE] * 2)
@@ -96,16 +107,29 @@ class TicTacToe:
     def increment_game_steps(self) -> None:
         self.game_steps += 1
 
-    def run_game_process(self) -> None:
+    def game_step(self) -> None:
         current_cell = vec2(pg.mouse.get_pos()) // CELL_SIZE
         col, row = map(int, current_cell)
         left_click = pg.mouse.get_pressed()[0]
 
         if left_click and self._board.access(row=row, col=col) == INF and self.winner is None:
             self._board.update(row=row, col=col, value=self.ply)
+            if self.animate_thinking is True:
+                self.animate_agent_thinking(
+                    animate_steps=THINKING_ANIMATION_STEPS,
+                    sleep_secs=THINKING_ANIMATION_SLEEP_SECS,
+                )
             self._board.run_agent()
             self.increment_game_steps()
             self.check_winner()
+
+    def animate_agent_thinking(self, animate_steps: int = 0, sleep_secs: float = 0) -> None:
+        if animate_steps > 0:
+            self.draw()
+            pg.display.update()
+            for i in range(animate_steps):
+                self.set_caption("Thinking" + [".", "..", "...", "..", "."][i % 5])
+                time.sleep(sleep_secs)
 
     def print_caption(self) -> None:
         if self.winner:
@@ -138,4 +162,4 @@ class TicTacToe:
     def run(self) -> None:
         self.print_caption()
         self.draw()
-        self.run_game_process()
+        self.game_step()
