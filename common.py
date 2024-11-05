@@ -1,9 +1,9 @@
-from enum  import Enum
+from enum import Enum
 
 import os
 
 
-DEBUG_LEVEL: int | None = int(os.getenv('DEBUG')) if os.getenv('DEBUG') else None
+DEBUG_LEVEL: int | None = int(os.getenv("DEBUG")) if os.getenv("DEBUG") else None
 
 
 class GameStartType(Enum):
