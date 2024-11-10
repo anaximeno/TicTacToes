@@ -13,7 +13,7 @@ prolog.consult(COMPUTATION_KNOWLEDGE_SOURCE)
 
 
 def execute_simple_query(q: str) -> dict[str, any] | None:
-    query = prolog.query(query=q)
+    query = prolog.query(q)
     result = None
 
     try:

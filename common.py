@@ -12,6 +12,18 @@ class GameStartType(Enum):
     RANDOM = 2
 
 
+class GamePlayType(Enum):
+    SINGLEPLAYER = 0
+    MULTIPLAYER = 1
+
+    @classmethod
+    def get_players(cls, game_play_type) -> list[str]:
+        if game_play_type == cls.SINGLEPLAYER:
+            return ["robot", "user"]
+        else:
+            return ["user 1", "user 2"]
+
+
 class DebugLevel(Enum):
     NONE = 0
     INFO = 1

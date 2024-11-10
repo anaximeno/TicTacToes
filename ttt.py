@@ -54,7 +54,10 @@ class Game:
 
 class TicTacToe:
     def __init__(
-        self, game: Game, robot_start: GameStartType, animate_thinking: bool = False
+        self,
+        game: Game,
+        robot_start: GameStartType,
+        animate_thinking: bool = False,
     ) -> None:
         self.game = game
         self.robot_start = robot_start
@@ -63,7 +66,9 @@ class TicTacToe:
         self.back_img = get_scaled_image(path=BOARD_IMG_PATH, res=[WIN_SIZE] * 2)
         self.o_img = get_scaled_image(path=O_IMG_PATH, res=[CELL_SIZE] * 2)
         self.x_img = get_scaled_image(path=X_IMG_PATH, res=[CELL_SIZE] * 2)
+
         self._players = ["robot", "user"]
+
         self.winner = None
         self.winner_line = []
         self.game_steps = 0
@@ -92,7 +97,8 @@ class TicTacToe:
         for line in self._board.lines:
             total = sum([self._board.access(row=i, col=j) for i, j in line])
             if total in {0, 3}:
-                self.winner = self._players[total == 0]
+                self.winner_index = total == 0
+                self.winner = self._players[self.winner_index]
                 self.winner_line = [
                     vec2(line[0][::-1]) * CELL_SIZE + CELL_CENTER,
                     vec2(line[2][::-1]) * CELL_SIZE + CELL_CENTER,
@@ -140,7 +146,7 @@ class TicTacToe:
     def print_caption(self) -> None:
         if self.winner:
             self.set_caption(
-                f'The {self.winner} player is the winner! Press "Space" to Restart.'
+                f"The player {'X' if self.winner_index == 0 else 'O'} is the winner! Press \"Space\" to Restart."
             )
         elif self.game_steps == 9:
             self.set_caption(f'Game Over! Press "Space" to Restart')
