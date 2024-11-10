@@ -2,6 +2,8 @@
 
 This is a **tic tac toe** game made using **Python** with **PyGame** for the game structure and **Prolog** to define the behavior of the actor that plays the game along with the user.
 
+![Example Image](assets/example.png)
+
 ## Dependencies
 
 - *PyGame >= 2.1.2*
