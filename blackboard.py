@@ -5,6 +5,7 @@ from pyswip.prolog import PrologError
 from common import debug_log, DebugLevel
 from constants import *
 
+import random
 
 prolog = Prolog()
 
@@ -124,7 +125,7 @@ class Controller:
         self.ks = knowledge_source
         self.board = board
 
-    def executeKS(self) -> bool:
+    def execute_knowledge_source(self) -> bool:
         preventive = self.ks.suggest_preventive_action()
         competitive = self.ks.suggest_competitive_action()
 
@@ -144,6 +145,14 @@ class Controller:
             self.board.update(row=action.line, col=action.col, value=1)
             return True
 
+        return False
+
+    def execute_random(self) -> bool:
+        if available_places := [(i, j) for i in range(3) for j in range(3) if self.board._data[i][j] == INF]:
+            choice = random.choice(available_places)
+            debug_log(f'Random Play at {choice}', DebugLevel.INFO)
+            self.board.update(row=choice[0], col=choice[1], value=1)
+            return True
         return False
 
     def _select_action(self, prev: Action | None, comp: Action | None) -> Action | None:
@@ -194,13 +203,15 @@ class Blackboard:
             self._data[row][col] = value
             self._game.check_winner()
 
-    def run_agent(self) -> None:
+    def run_agent(self, random: bool = False) -> None:
         if self._game.winner is None:
             self._process_robot_step()
             self._game.check_winner()
 
-    def _process_robot_step(self) -> None:
-        if self._control.executeKS():
+    def _process_robot_step(self, random: bool = False) -> None:
+        if not random and self._control.execute_knowledge_source():
+            self._game.increment_game_steps()
+        elif random and self._control.execute_random():
             self._game.increment_game_steps()
 
     def access(self, *, row: int = None, col: int = None) -> int | None:
