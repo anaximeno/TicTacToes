@@ -205,7 +205,7 @@ class Blackboard:
 
     def run_agent(self, random: bool = False) -> None:
         if self._game.winner is None:
-            self._process_robot_step()
+            self._process_robot_step(random=random)
             self._game.check_winner()
 
     def _process_robot_step(self, random: bool = False) -> None:

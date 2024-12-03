@@ -83,13 +83,7 @@ class TicTacToe:
 
         if start_by == GameStartType.AGENT:
             debug_log("Starting By: Agent Player", level=DebugLevel.INFO)
-            row = random.randint(0, 2)
-            col = random.randint(0, 2)
-            self._board.update(
-                row=row,
-                col=col,
-                value=1,
-            )
+            self._board.run_agent(random=True)
         else:
             debug_log("Starting By: User Player", level=DebugLevel.INFO)
 
